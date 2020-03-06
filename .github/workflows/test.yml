@@ -3,15 +3,22 @@ name: Tests
 on: push
 
 jobs:
-  lint:
-    name: Run tests
-    runs-on: ubuntu-latest
-    container: 'node:12-alpine'
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
-    - uses: actions/checkout@v1
-    - name: Install dependencies
-      run: npm install
-    - name: Run build
-      run: npm run build --if-present
-    - name: Run the test suite
-      run: npm test
+      - name: Check out repo
+        uses: actions/checkout@v2
+        
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
